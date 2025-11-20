@@ -1,0 +1,100 @@
+html, body {
+    height: 100%;
+    background-color: #baf2bb;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label, p {
+    margin-left: 5px;
+}
+
+.content {
+    width: 800px;
+    padding: 20px;
+    background-color: white;
+    border: 2px solid #2E8B57;
+    border-radius: 5px;
+    margin-top: 20px;
+    box-sizing: border-box;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2.5em;
+}
+
+.alert {
+    padding: 20px;
+    margin: 5px;
+    color: #006400;
+    background-color: #F0FFF0;
+    border: 1px solid #2E8B57;
+}
+
+hr {
+    border: none;
+    border-top: 2px solid #2E8B57;
+    width: 100%;
+    margin-top: 0;
+}
+
+.post {
+    padding: 10px;
+    margin: 5px;
+    background-color: #D0F0C0;
+}
+
+select, input[type="submit"], input[type="date"] {
+    font-size: 1em;
+    padding: 10px 15px;
+    border: 2px solid #2E8B57;
+    border-radius: 8px;
+    background-color: #F0FFF0;
+    color: #006400;
+    margin: 10px 5px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+select:hover, input[type="submit"]:hover, input[type="date"]:hover {
+    background-color: #D0F0C0;
+    border-color: #1E5938;
+    color: black;
+}
+
+input[type="submit"] {
+    background-color: #2E8B57;
+    color: white;
+}
+
+input[type="submit"]:hover {
+    background-color: #1E5938;
+}
+
+nav {
+    width: 800px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #7B1FA2;
+    font-size: 1.7em;
+    font-weight: bold;
+    padding: 5px 10px;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #4A148C;
+    text-decoration: underline;
+}

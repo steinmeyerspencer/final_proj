@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='reservations.css') }}">
+{% endblock %}
+
+{% block content %}
+    <h1>Select Your Seat</h1>
+    
+    <div class="legend">
+        <div class="seat available"></div> <span>Available</span>
+        <div class="seat taken"></div> <span>Reserved</span>
+    </div>
+
+    <div class="fuselage">
+        <div class="cockpit"></div>
+        
+        {% for row in seats %}
+            <div class="row">
+                {% for seat in row %}
+                    <div class="seat {{ 'taken' if seat == 'X' else 'available' }}">
+                        </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        
+    </div>
+{% endblock %}
