@@ -6,9 +6,38 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config['SECRET_KEY'] = 'your secret key'
 
+seating_chart = [
+    ['O', 'X', 'X', 'O'],
+    ['X', 'O', 'O', 'O'],
+    ['O', 'O', 'X', 'O'],
+    ['X', 'O', 'O', 'O'],
+    ['O', 'O', 'O', 'X'],
+    ['O', 'X', 'O', 'O'],
+    ['O', 'O', 'O', 'O'],
+    ['O', 'O', 'O', 'O'],
+    ['O', 'O', 'X', 'O'],
+    ['O', 'O', 'O', 'X'],
+    ['X', 'O', 'O', 'O'],
+    ['X', 'O', 'O', 'O']
+]
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/', methods = ('POST',))
+def index_post():
+    page = request.form.get('pageOption')
+    
+    if page == 'adminLogin':
+        return render_template('admin.html')
+    elif page == 'reserveSeat':
+        return render_template('reservations.html', seats = seating_chart)
+    
+    
+    return render_template('index.html')
+
+
 
 @app.route('/admin')
 def admin():
@@ -16,21 +45,10 @@ def admin():
 
 @app.route('/reservations')
 def reservations():
-    seating_chart = [
-        ['O', 'X', 'X', 'O'],
-        ['X', 'O', 'O', 'O'],
-        ['O', 'O', 'X', 'O'],
-        ['X', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'X'],
-        ['O', 'X', 'O', 'O'],
-        ['O', 'O', 'O', 'O'],
-        ['O', 'O', 'O', 'O'],
-        ['O', 'O', 'X', 'O'],
-        ['O', 'O', 'O', 'X'],
-        ['X', 'O', 'O', 'O'],
-        ['X', 'O', 'O', 'O']
-    ]
+    
     
     return render_template('reservations.html', seats=seating_chart)
+
+
 
 app.run(port=5004)

@@ -2,6 +2,20 @@
 {% block title %} Home {% endblock %}
 
 {% block content %}
-    <h1>Home</h1>
+    <h1>IT-4320 Trip Reservation System</h1>
+    <hr>
+    <p>Welcome to the IT-4320 reservation system. Use the select box to make a reservation or log in as administrator</p>
+    <form action="#" method="post">
+        <label for="pageOption">Choose Menu Option:</label>
+        <br>
+        <select name="pageOption" id="pageOption">
+            <option value="">Choose an Option</option>
+            <option value="adminLogin">Admin Login</option>
+            <option value="reserveSeat">Reserve a Seat</option>
+        </select>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
 
+     
 {% endblock %}
