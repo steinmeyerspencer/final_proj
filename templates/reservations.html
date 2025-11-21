@@ -6,24 +6,93 @@
 {% endblock %}
 
 {% block content %}
+    {% if text_to_display %}
+        {% for message in text_to_display %}
+            <p class="alert">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+    
     <h1>Select Your Seat</h1>
     
     <div class="legend">
         <div class="seat available"></div> <span>Available</span>
         <div class="seat taken"></div> <span>Reserved</span>
+        <div class="seat selected" style="background-color: #FFD700;"></div> <span>Selected</span>
     </div>
 
     <div class="fuselage">
         <div class="cockpit"></div>
         
         {% for row in seats %}
+            {% set row_num = loop.index %}
             <div class="row">
                 {% for seat in row %}
-                    <div class="seat {{ 'taken' if seat == 'X' else 'available' }}">
+                    {% set seat_num = loop.index %}
+                    
+                    {% if seat == 'O' %}
+                        <div class="seat available" 
+                             data-row="{{ row_num }}" 
+                             data-seat="{{ seat_num }}"
+                             onclick="selectSeat(this)">
                         </div>
+                    {% else %}
+                        <div class="seat taken"></div>
+                    {% endif %}
+
                 {% endfor %}
             </div>
         {% endfor %}
         
     </div>
+
+    <h1>Make a Reservation</h1>
+
+    <form action="#" method="POST" style="max-width: 400px; margin: 0 auto;">
+        
+        <label for="first_name">First Name</label>
+        <br>
+        <input type="text" id="first_name" name="first_name" placeholder="First Name" required>
+        <br>
+        <label for="last_name">Last Name</label>
+        <br>
+        <input type="text" id="last_name" name="last_name" placeholder="Last Name" required>
+        <br>
+        <label for="row">Choose a Row:</label>
+        <br>
+        <select id="row" name="row" required>
+            <option value="" disabled selected>Row</option>
+            {% for i in range(1, 13) %}
+                <option value="{{ i }}">Row {{ i }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="seat">Choose a Seat:</label>
+        <br>
+        <select id="seat" name="seat" required>
+            <option value="" disabled selected>Seat</option>
+            {% for i in range(1, 5) %}
+                <option value="{{ i }}">Seat {{ i }}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <script>
+        function selectSeat(element) {
+            const previouslySelected = document.querySelector('.seat.selected');
+            if (previouslySelected) {
+                previouslySelected.classList.remove('selected');
+            }
+
+            element.classList.add('selected');
+
+            const rowNum = element.getAttribute('data-row');
+            const seatNum = element.getAttribute('data-seat');
+
+            document.getElementById('row').value = rowNum;
+            document.getElementById('seat').value = seatNum;
+        }
+    </script>
+
 {% endblock %}

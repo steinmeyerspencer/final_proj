@@ -79,3 +79,9 @@
     margin-bottom: 15px;
     font-size: 0.9em;
 }
+
+.seat.selected {
+    background-color: #FFD700 !important;
+    border: 2px solid #E97451;
+    transform: scale(1.1);
+}
