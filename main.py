@@ -76,12 +76,11 @@ def index_post():
     
     return render_template('index.html')
 
-
 # route to display admin page
 @app.route('/admin')
 def admin():
     chart = get_seating_chart()
-    return render_template('admin.html', chart_to_display = chart)
+    return render_template('admin.html')
 
 # route to handle admin page logic
 @app.route('/admin', methods = ('POST',))
