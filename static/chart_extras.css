@@ -1,0 +1,36 @@
+.seat.available {
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.seat.available:hover {
+    background-color: #3CB371;
+    transform: scale(1.1);
+}
+
+.seat:hover::before {
+    content: "R" attr(data-row) " : S" attr(data-seat);
+    position: absolute;
+    bottom: 120%; 
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    white-space: nowrap; 
+    z-index: 100; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    pointer-events: none;
+}
+
+.seat.taken {
+    cursor: not-allowed;
+}
+
+.seat.selected {
+    background-color: #FFD700 !important;
+    border: 2px solid #E97451;
+    transform: scale(1.1);
+}

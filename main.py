@@ -80,7 +80,8 @@ def index_post():
 # route to display admin page
 @app.route('/admin')
 def admin():
-    return render_template('admin.html')
+    chart = get_seating_chart()
+    return render_template('admin.html', chart_to_display = chart)
 
 # route to handle admin page logic
 @app.route('/admin', methods = ('POST',))

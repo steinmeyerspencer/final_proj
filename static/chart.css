@@ -1,0 +1,73 @@
+.fuselage {
+    background-color: #f0f0f0;
+    border: 2px solid #aaa;
+    border-radius: 30px 30px 10px 10px;
+    padding: 30px 10px 10px 10px;
+    width: fit-content;
+    margin: 0 auto;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.cockpit {
+    height: 20px;
+    width: 70px;
+    background-color: #333;
+    border-radius: 10px 10px 3px 3px;
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid #ccc;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+
+.seat {
+    width: 18px;
+    height: 24px;
+    margin: 0 2px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    position: relative;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+}
+
+.seat:nth-child(2) {
+    margin-right: 10px;
+}
+
+.seat.available {
+    background-color: #2E8B57;
+}
+
+.seat.available::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: -1px;
+    right: -1px;
+    height: 3px;
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 1px;
+}
+
+.seat.taken {
+    background-color: #B22222;
+    opacity: 0.7;
+}
+
+.legend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}
