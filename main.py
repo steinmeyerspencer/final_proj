@@ -7,21 +7,6 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config['SECRET_KEY'] = 'your secret key'
 
-seating_chart = [
-    ['O', 'X', 'X', 'O'],
-    ['X', 'O', 'O', 'O'],
-    ['O', 'O', 'X', 'O'],
-    ['X', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'X'],
-    ['O', 'X', 'O', 'O'],
-    ['O', 'O', 'O', 'O'],
-    ['O', 'O', 'O', 'O'],
-    ['O', 'O', 'X', 'O'],
-    ['O', 'O', 'O', 'X'],
-    ['X', 'O', 'O', 'O'],
-    ['X', 'O', 'O', 'O']
-]
-
 # Function to open a connection to the database.db file
 def get_db_connection():
     # create connection to the database
@@ -33,6 +18,24 @@ def get_db_connection():
 
     #return the connection object
     return conn
+
+def get_seating_chart():
+    seating_chart = [['O'] * 4 for _ in range(12)]
+    
+    db = get_db_connection()
+    
+    seats = db.execute('SELECT seatRow, seatColumn FROM reservations').fetchall()
+    
+    for seat in seats:
+        row = seat[0]
+        col = seat[1]
+        
+        seating_chart[row - 1][col - 1] = 'X'
+        
+    db.close()
+        
+    return seating_chart
+    
 
 def create_eticket_num(first_name):
     infotc_string = 'INFOTC4320'
@@ -67,6 +70,7 @@ def index_post():
     if page == 'adminLogin':
         return render_template('admin.html')
     elif page == 'reserveSeat':
+        seating_chart = get_seating_chart()
         return render_template('reservations.html', seats = seating_chart)
     
     
@@ -86,7 +90,7 @@ def admin_post():
 # route to display reservations page
 @app.route('/reservations')
 def reservations():
-    
+    seating_chart = get_seating_chart()
     return render_template('reservations.html', seats=seating_chart)
 
 # route to handle seat reservation request
@@ -95,23 +99,38 @@ def reservations_post():
     # get information from reservations page and create variables to send to function
     first_name = request.form.get('first_name')
     last_name = request.form.get('last_name')
-    row = request.form.get('row')
-    seat = request.form.get('seat')
+    row = int(request.form.get('row'))
+    seat = int(request.form.get('seat'))
     eticket_num = create_eticket_num(first_name)
     created = datetime.now()
+    
+    
+    # insert into database
+    try:
+        conn = get_db_connection()
+        sql_query = """
+            INSERT INTO reservations (passengerName, seatRow, seatColumn, eTicketNumber, created) 
+            VALUES (?, ?, ?, ?, ?);
+            """
+        conn.execute(sql_query, (first_name, row, seat, eticket_num, created))
+        conn.commit()
+        
+    except sqlite3.Error as e:
+        flash(f"A database error occurred: {e}", "error")
+        return redirect(url_for('reservations'))
+    
+    finally:
+        if conn:
+            conn.close()
     
     # set the text to display
     text_to_display = []
     text_to_display.append(f"Congralutions {first_name}! Row {row}, seat {seat} is now reserved for you. Enjoy your trip!")
-    text_to_display.append(f"\nYour eticket number is: {eticket_num}")
-    text_to_display.append(f"\ndb: {first_name} {last_name} {row} {seat} {eticket_num} {created}")
+    text_to_display.append(f"Your eticket number is: {eticket_num}")
     
-    # to do: set the seating chart to the actual stuff from the database.
-        # update seating chart after reservation goes through
-            # should be handled by sending to database
-        # send reservation to database
-        # update css for text input boxes
-        
+    
+    # get new chart and display it
+    seating_chart = get_seating_chart()
     
     return render_template('reservations.html', seats=seating_chart, text_to_display = text_to_display)
 
