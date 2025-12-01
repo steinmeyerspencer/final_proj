@@ -104,6 +104,13 @@ def reservations_post():
     eticket_num = create_eticket_num(first_name)
     created = datetime.now()
     
+    text_to_display = []
+    
+    current_chart = get_seating_chart()
+    if current_chart[row - 1][seat - 1] == 'X':
+        text_to_display.append(f"Row {row}, seat {seat} is already taken. Please select another seat.")
+        return render_template('reservations.html', seats=current_chart, text_to_display = text_to_display)
+    
     
     # insert into database
     try:
@@ -124,7 +131,6 @@ def reservations_post():
             conn.close()
     
     # set the text to display
-    text_to_display = []
     text_to_display.append(f"Congralutions {first_name}! Row {row}, seat {seat} is now reserved for you. Enjoy your trip!")
     text_to_display.append(f"Your eticket number is: {eticket_num}")
     
