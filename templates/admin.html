@@ -43,6 +43,38 @@
             </div>
         {% endfor %}
     </div>
+
+    <hr>
+    <h2>Total Sales</h2>
+    <p><strong>${{ total_sales }}</strong></p>
+
+    <hr>
+
+    <h2>Reservations</h2>
+    <table border="1" cellpadding="6">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Row</th>
+            <th>Seat</th>
+            <th>Action</th>
+        </tr>
+
+        {% for r in all_reservations %}
+        <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.passengerName }}</td>
+            <td>{{ r.seatRow }}</td>
+            <td>{{ r.seatColumn }}</td>
+            <td>
+                <form action="{{ url_for('delete_reservation', reservation_id=r.id) }}" method="POST" style="margin:0;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
     {% else %}
         <h1>Administrator Login</h1>
 
