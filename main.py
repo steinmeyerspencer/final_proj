@@ -27,6 +27,7 @@ def get_seating_chart():
     seats = db.execute('SELECT seatRow, seatColumn FROM reservations').fetchall()
     
     for seat in seats:
+        # seat is a sqlite3.Row, index access works but use numeric indexes as before
         row = seat[0]
         col = seat[1]
         
@@ -55,6 +56,28 @@ def create_eticket_num(first_name):
     eticket_num += infotc_string[min_length:]
     
     return eticket_num
+
+def get_cost_matrix():
+    cost_matrix = [[100, 75, 50, 100] for _ in range(12)]
+    return cost_matrix
+
+def calculate_total_sales():
+    cost_matrix = get_cost_matrix()
+    conn = get_db_connection()
+    
+    reservations = conn.execute(
+        "SELECT seatRow, seatColumn FROM reservations"
+    ).fetchall()
+    conn.close()
+    
+    total = 0
+    for r in reservations:
+        # rows/cols in DB are 1-based
+        row = r["seatRow"] - 1
+        col = r["seatColumn"] - 1
+        total += cost_matrix[row][col]
+        
+    return total
     
 
 # route to display index page
@@ -108,9 +131,33 @@ def admin():
 
     if session.get('admin_logged_in'):
         chart = get_seating_chart()
-        return render_template('admin.html', chart_to_display=chart)
+        total_sales = calculate_total_sales()
+
+        conn = get_db_connection()
+        all_reservations = conn.execute(
+            "SELECT id, passengerName, seatRow, seatColumn FROM reservations"
+        ).fetchall()
+        conn.close() 
+
+        return render_template('admin.html',
+                               chart_to_display=chart, 
+                               total_sales=total_sales, 
+                               all_reservations=all_reservations
+                            )
     else:
         return render_template('admin.html', chart_to_display=None)
+    
+@app.route('/delete_reservation/<int:reservation_id>', methods=['POST'])
+def delete_reservation(reservation_id):
+    if not session.get('admin_logged_in'):
+        abort(403)
+        
+    conn = get_db_connection()
+    # pass a tuple for parameters
+    conn.execute("DELETE FROM reservations WHERE id = ?", (reservation_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('admin'))
 
 # route to display reservations page
 @app.route('/reservations')
@@ -165,4 +212,5 @@ def reservations_post():
     
     return render_template('reservations.html', seats=seating_chart, text_to_display = text_to_display)
 
-app.run(port=5004)
+if __name__ == '__main__':
+    app.run(port=5004)
