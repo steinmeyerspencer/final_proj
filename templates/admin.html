@@ -9,6 +9,7 @@
 
     <h1>Current Seating Chart</h1>
     
+    {% if chart_to_display %}
     <p style="text-align: center;">View the current layout of the aircraft.</p>
     <hr>
 
@@ -42,5 +43,24 @@
             </div>
         {% endfor %}
     </div>
+    {% else %}
+        <h1>Administrator Login</h1>
+
+        <form method="POST" action="{{ url_for('admin') }}" style="max-width: 300px; margin: 0 auto;">
+            <label for="username">Username:</label><br>
+            <input type="text" name="username" required><br>
+
+            <label for="password">Password:</label><br>
+            <input type="password" name="password" required><br>
+
+            <input type="submit" value="Login">
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <p style="color: red;">{{ messages[0] }}</p>
+            {% endif %}
+            {% endwith %}
+        </form>
+    {% endif %}
 
 {% endblock %}

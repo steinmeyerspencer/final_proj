@@ -71,7 +71,7 @@ def index_post():
     page = request.form.get('pageOption')
     
     if page == 'adminLogin':
-        return redirect(url_for('admin_login'))
+        return redirect(url_for('admin'))
     elif page == 'reserveSeat':
         seating_chart = get_seating_chart()
         return render_template('reservations.html', seats = seating_chart)
@@ -79,18 +79,15 @@ def index_post():
         return render_template('index.html')
 
 # route to handle admin login
-@app.route('/admin/login', methods=['GET', 'POST'])
-def admin_login():
-    # Always logout on page load (forces re-login)
-    #session.pop('admin_logged_in', None)
-
-    if request.method == 'POST':
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+    if request.method == 'POST' and not session.get('admin_logged_in'):
         username = request.form.get('username')
         password = request.form.get('password')
 
         if not username or not password:
             flash("Please enter both username and password.")
-            return render_template("admin_login.html")
+            return render_template("admin.html")
 
         conn = get_db_connection()
         admin = conn.execute(
@@ -103,22 +100,17 @@ def admin_login():
         if admin and admin["password"] == password:
             session["admin_logged_in"] = True
             session["admin_username"] = username
-            return redirect(url_for("admin_page"))
+        else:
+           # Wrong Login
+           flash("Invalid username or password.") 
 
-        # Wrong login
-        flash("Invalid username or password.")
-        return render_template("admin_login.html")
+        return redirect(url_for("admin"))
 
-    return render_template("admin_login.html")
-
-# route to admin page (protected)
-@app.route('/admin')
-def admin_page():
-    if "admin_logged_in" not in session:
-        return redirect(url_for("admin_login"))
-
-    chart = get_seating_chart()
-    return render_template("admin.html", chart_to_display=chart)
+    if session.get('admin_logged_in'):
+        chart = get_seating_chart()
+        return render_template('admin.html', chart_to_display=chart)
+    else:
+        return render_template('admin.html', chart_to_display=None)
 
 # route to display reservations page
 @app.route('/reservations')
