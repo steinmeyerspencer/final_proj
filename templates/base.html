@@ -11,7 +11,13 @@
 <body>
     <nav>
         <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('admin') }}">Admin</a>
+
+        {% if session.get('admin_logged_in') %}
+            <a href="{{ url_for('admin_page') }}">Admin</a>
+        {% else %}
+            <a href="{{ url_for('admin_login') }}">Admin</a>
+        {% endif %}
+
         <a href="{{ url_for('reservations') }}">Reservations</a>
     </nav>
     <hr>

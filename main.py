@@ -1,5 +1,5 @@
 import sqlite3
-from flask import Flask, render_template, request, url_for, flash, redirect, abort
+from flask import Flask, render_template, request, url_for, flash, redirect, abort, session
 from datetime import datetime
 
 # make a Flask application object called app
@@ -60,6 +60,9 @@ def create_eticket_num(first_name):
 # route to display index page
 @app.route('/')
 def index():
+    # Always logout admin on page load (forces re-login)
+    session.pop('admin_logged_in', None)
+
     return render_template('index.html')
 
 # route to handle logic from when the page is selected
@@ -68,24 +71,54 @@ def index_post():
     page = request.form.get('pageOption')
     
     if page == 'adminLogin':
-        return render_template('admin.html')
+        return redirect(url_for('admin_login'))
     elif page == 'reserveSeat':
         seating_chart = get_seating_chart()
         return render_template('reservations.html', seats = seating_chart)
-    
-    
-    return render_template('index.html')
+    else:
+        return render_template('index.html')
 
-# route to display admin page
+# route to handle admin login
+@app.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    # Always logout on page load (forces re-login)
+    #session.pop('admin_logged_in', None)
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if not username or not password:
+            flash("Please enter both username and password.")
+            return render_template("admin_login.html")
+
+        conn = get_db_connection()
+        admin = conn.execute(
+            "SELECT * FROM admins WHERE username = ?",
+            (username,)
+        ).fetchone()
+        conn.close()
+
+        # Correct login
+        if admin and admin["password"] == password:
+            session["admin_logged_in"] = True
+            session["admin_username"] = username
+            return redirect(url_for("admin_page"))
+
+        # Wrong login
+        flash("Invalid username or password.")
+        return render_template("admin_login.html")
+
+    return render_template("admin_login.html")
+
+# route to admin page (protected)
 @app.route('/admin')
-def admin():
-    chart = get_seating_chart()
-    return render_template('admin.html')
+def admin_page():
+    if "admin_logged_in" not in session:
+        return redirect(url_for("admin_login"))
 
-# route to handle admin page logic
-@app.route('/admin', methods = ('POST',))
-def admin_post():
-    return render_template('admin.html')
+    chart = get_seating_chart()
+    return render_template("admin.html", chart_to_display=chart)
 
 # route to display reservations page
 @app.route('/reservations')

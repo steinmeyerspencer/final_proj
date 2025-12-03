@@ -7,56 +7,40 @@
 
 {% block content %}
 
-    {% if chart_to_display %}
-        <h1>Current Seating Chart</h1>
+    <h1>Current Seating Chart</h1>
+    
+    <p style="text-align: center;">View the current layout of the aircraft.</p>
+    <hr>
+
+    <div class="legend">
+        <div class="seat available"></div> <span>Available</span>
+        <div class="seat taken"></div> <span>Reserved</span>
+    </div>
+
+    <div class="fuselage">
+        <div class="cockpit"></div>
         
-        <p style="text-align: center;">View the current layout of the aircraft.</p>
-        <hr>
+        {% for row in chart_to_display %}
+            {% set row_num = loop.index %}
+            <div class="row">
+                {% for seat in row %}
+                    {% set seat_num = loop.index %}
+                    
+                    {% if seat == 'O' %}
+                        <div class="seat available" 
+                                data-row="{{ row_num }}" 
+                                data-seat="{{ seat_num }}">
+                        </div>
+                    {% else %}
+                        <div class="seat taken"
+                                data-row="{{ row_num }}" 
+                                data-seat="{{ seat_num }}">
+                        </div>
+                    {% endif %}
 
-        <div class="legend">
-            <div class="seat available"></div> <span>Available</span>
-            <div class="seat taken"></div> <span>Reserved</span>
-        </div>
-
-        <div class="fuselage">
-            <div class="cockpit"></div>
-            
-            {% for row in chart_to_display %}
-                {% set row_num = loop.index %}
-                <div class="row">
-                    {% for seat in row %}
-                        {% set seat_num = loop.index %}
-                        
-                        {% if seat == 'O' %}
-                            <div class="seat available" 
-                                 data-row="{{ row_num }}" 
-                                 data-seat="{{ seat_num }}">
-                            </div>
-                        {% else %}
-                            <div class="seat taken"
-                                 data-row="{{ row_num }}" 
-                                 data-seat="{{ seat_num }}">
-                            </div>
-                        {% endif %}
-
-                    {% endfor %}
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        
-        <h1>Administrator Login</h1>
-        
-        <form method="POST" style="max-width: 300px; margin: 0 auto;">
-            <label for="username">Username:</label><br>
-            <input type="text" name="username" required><br>
-            
-            <label for="password">Password:</label><br>
-            <input type="password" name="password" required><br>
-            
-            <input type="submit" value="Login">
-        </form>
-
-    {% endif %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
 
 {% endblock %}
