@@ -96,9 +96,9 @@ def index_post():
     if page == 'adminLogin':
         return redirect(url_for('admin'))
     elif page == 'reserveSeat':
-        seating_chart = get_seating_chart()
-        return render_template('reservations.html', seats = seating_chart)
+        return redirect(url_for('reservations'))
     else:
+        flash("Please select a page.")
         return render_template('index.html')
 
 # route to handle admin login
@@ -151,6 +151,7 @@ def admin():
 def delete_reservation(reservation_id):
     if not session.get('admin_logged_in'):
         abort(403)
+    
         
     conn = get_db_connection()
     # pass a tuple for parameters
@@ -160,7 +161,7 @@ def delete_reservation(reservation_id):
     return redirect(url_for('admin'))
 
 # route to display reservations page
-@app.route('/reservations')
+@app.route('/reservations', methods = ('GET', ))
 def reservations():
     seating_chart = get_seating_chart()
     return render_template('reservations.html', seats=seating_chart)

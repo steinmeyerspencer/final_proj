@@ -7,9 +7,10 @@
 
 {% block content %}
 
-    <h1>Current Seating Chart</h1>
+    
     
     {% if chart_to_display %}
+    <h1>Current Seating Chart</h1>
     <p style="text-align: center;">View the current layout of the aircraft.</p>
     <hr>
 
@@ -68,7 +69,11 @@
             <td>{{ r.seatColumn }}</td>
             <td>
                 <form action="{{ url_for('delete_reservation', reservation_id=r.id) }}" method="POST" style="margin:0;">
-                    <button type="submit">Delete</button>
+                    <button type="submit" 
+                            style="background-color: rgb(255, 77, 77); color: white; border: none;"
+                            onclick="return confirm('Are you sure you want to delete this item?');">
+                            Delete
+                    </button>
                 </form>
             </td>
         </tr>
